@@ -1,0 +1,30 @@
+{
+  "name": "Sparx Hax",
+  "version": "0.5",
+  "description": "Answers sparx questions",
+  "permissions": ["storage", "tabs", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://maths.sparx-learning.com/*",
+    "https://api.groq.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://maths.sparx-learning.com/*"],
+      "js": ["contentScript.js"]
+    }
+  ],
+"icons": {
+  "16": "assets/icon16.png",
+  "48": "assets/icon48.png",
+  "128": "assets/icon128.png"
+},
+
+  "action": {
+    "default_title": "Sparx Hax",
+    "default_popup": "popup.html"
+  },
+  "manifest_version": 3
+} 

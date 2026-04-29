@@ -1,0 +1,150 @@
+body {
+  width: 340px;
+  padding: 12px;
+  font-family: sans-serif;
+  margin: 0;
+}
+h3 {
+  margin: 0 0 10px;
+}
+input {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 6px;
+  padding: 6px;
+}
+.answerbtn {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+#solve {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
+#solve:disabled {
+  background: #a5a3f0;
+  cursor: not-allowed;
+}
+#status {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 6px;
+  min-height: 16px;
+}
+#preview img {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+#result {
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  background: #f9f9f9;
+  padding: 8px;
+  border-radius: 4px;
+  min-height: 40px;
+}
+hr {
+  margin: 10px 0;
+}
+
+#debug-panel {
+  margin-top: 8px;
+  font-size: 11px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+}
+
+#debug-model {
+  padding: 5px 8px;
+  background: #1e1b4b;
+  color: #a5b4fc;
+  font-family: monospace;
+  font-size: 11px;
+  border-bottom: 1px solid #312e81;
+}
+
+#debug-model .debug-label {
+  color: #6366f1;
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 2px;
+}
+
+#debug-model .model-name {
+  color: #e0e7ff;
+  font-weight: bold;
+}
+
+#debug-model .model-path {
+  color: #818cf8;
+  margin-left: 6px;
+  font-style: italic;
+}
+
+#debug-vision-output {
+  padding: 5px 8px;
+  background: #0f172a;
+  color: #94a3b8;
+  font-family: monospace;
+  font-size: 10px;
+  max-height: 80px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#debug-vision-output .debug-label {
+  color: #38bdf8;
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 2px;
+}
+
+#debug-vision-output .vision-text {
+  color: #cbd5e1;
+}
+
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  width: 33.3%;
+}
+
+.tab button:hover {
+  background-color: #ddd;
+}
+
+.tab button.active {
+  background-color: #ccc;
+}
+
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+} 

@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="tab">
+      <button class="tablinks" data-tab="Answer">Answer</button>
+      <button class="tablinks" data-tab="Bookwork">Bookwork</button>
+      <button class="tablinks" data-tab="Apikey">API Key</button>
+    </div>
+
+    <div id="Answer" class="tabcontent">
+      <button id="solve" class="answerbtn">Solve Question</button>
+      <div id="status"></div>
+      <div id="preview"></div>
+      <div id="result"></div>
+      <div id="debug-panel" style="display:none">
+        <div id="debug-model"></div>
+        <div id="debug-vision-output"></div>
+      </div>
+    </div>
+
+    <div id="Bookwork" class="tabcontent"></div>
+
+    <div id="Apikey" class="tabcontent">
+      <input id="api-key" type="password" placeholder="Groq API key (gsk_...)" />
+      <button id="saveKey" class="answerbtn">Save Key</button>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html> 
