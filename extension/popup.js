@@ -8,17 +8,34 @@ const debugVision = document.getElementById("debug-vision-output");
 
 function setDebugModel(modelName, path) {
   debugPanel.style.display = "block";
-  debugModel.innerHTML = `<span class="debug-label">Final answer from</span><span class="model-name">${modelName}</span><span class="model-path">(${path})</span>`;
+  debugModel.replaceChildren();
+  const label = document.createElement("span");
+  label.className = "debug-label";
+  label.textContent = "Final answer from";
+  const name = document.createElement("span");
+  name.className = "model-name";
+  name.textContent = modelName;
+  const pathEl = document.createElement("span");
+  pathEl.className = "model-path";
+  pathEl.textContent = `(${path})`;
+  debugModel.append(label, name, pathEl);
 }
 
 function setDebugVision(text) {
-  debugVision.innerHTML = `<span class="debug-label">Vision → Calc AI</span><span class="vision-text">${text || "—"}</span>`;
+  debugVision.replaceChildren();
+  const label = document.createElement("span");
+  label.className = "debug-label";
+  label.textContent = "Vision → Calc AI";
+  const vision = document.createElement("span");
+  vision.className = "vision-text";
+  vision.textContent = text || "—";
+  debugVision.append(label, vision);
 }
 
 function clearDebug() {
   debugPanel.style.display = "none";
-  debugModel.innerHTML = "";
-  debugVision.innerHTML = "";
+  debugModel.replaceChildren();
+  debugVision.replaceChildren();
 }
 
 chrome.storage.local.get(
@@ -26,7 +43,11 @@ chrome.storage.local.get(
   (result) => {
     if (result.groqApiKey) document.getElementById("api-key").value = result.groqApiKey;
     if (result.lastAnswer) setResult(result.lastAnswer);
-    if (result.lastScreenshot) previewEl.innerHTML = `<img src="${result.lastScreenshot}" />`;
+    if (result.lastScreenshot) {
+      const img = document.createElement("img");
+      img.src = result.lastScreenshot;
+      previewEl.replaceChildren(img);
+    }
     if (result.currentQuestion) setStatus(`Current: ${result.currentQuestion}`);
     if (result.lastDebugModel) {
       setDebugModel(result.lastDebugModel, result.lastDebugPath || "");
@@ -37,8 +58,7 @@ chrome.storage.local.get(
 
 document.getElementById("saveKey").addEventListener("click", () => {
   const key = document.getElementById("api-key").value.trim();
-  chrome.storage.local.set({ groqApiKey: key }
-  );
+  chrome.storage.local.set({ groqApiKey: key });
 });
 
 function setStatus(msg) { statusEl.innerText = msg; }
@@ -51,13 +71,15 @@ solveBtn.addEventListener("click", async () => {
 
   setLoading(true);
   setResult("");
-  previewEl.innerHTML = "";
+  previewEl.replaceChildren();
   clearDebug();
 
   try {
     setStatus("Taking screenshot...");
     const dataUrl = await captureScreenshot();
-    previewEl.innerHTML = `<img src="${dataUrl}" />`;
+    const img = document.createElement("img");
+    img.src = dataUrl;
+    previewEl.replaceChildren(img);
     const base64 = dataUrl.split(",")[1];
 
     setStatus("Reading question...");
@@ -130,7 +152,6 @@ async function extractTextFromScreenshot(base64, apiKey) {
 }
 
 async function solveQuestion(questionText, apiKey) {
-  
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
@@ -143,10 +164,10 @@ async function solveQuestion(questionText, apiKey) {
       ]
     })
   });
-const raw = await response.text();
-const data = JSON.parse(raw);
-const modelName = data.model || "openai/gpt-oss-120b";
-console.log("solveQuestion model:", modelName, "| raw:", data.choices[0].message.content);
+  const raw = await response.text();
+  const data = JSON.parse(raw);
+  const modelName = data.model || "openai/gpt-oss-120b";
+  console.log("solveQuestion model:", modelName, "| raw:", data.choices[0].message.content);
   if (!response.ok) throw new Error(data.error?.message || "Solver API error");
   return { result: cleanAnswer(data.choices[0].message.content), model: modelName };
 }
@@ -173,10 +194,10 @@ async function solveWithVision(base64, apiKey) {
       ]
     })
   });
-const raw = await response.text();
-const data = JSON.parse(raw);
-const modelName = data.model || "meta-llama/llama-4-scout-17b-16e-instruct";
-console.log("solveWithVision model:", modelName, "| raw:", data.choices[0].message.content);
+  const raw = await response.text();
+  const data = JSON.parse(raw);
+  const modelName = data.model || "meta-llama/llama-4-scout-17b-16e-instruct";
+  console.log("solveWithVision model:", modelName, "| raw:", data.choices[0].message.content);
   if (!response.ok) throw new Error(data.error?.message || "Vision solver error");
   return { result: cleanAnswer(data.choices[0].message.content), model: modelName };
 }
@@ -191,11 +212,11 @@ function cleanAnswer(text) {
     .replace(/Ã·/g, "÷")
     .replace(/Ï€/g, "π")
     .replace(/â€"/g, "−");
-text = text.replace(/\\boxed\{([^}]+)\}/g, "$1");
-text = text.replace(/([^\s^]+)\^(-?\d+)/g, (_, base, exp) => {
-  const superMap = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
-  return base + [...exp].map(c => superMap[c] ?? c).join('');
-});
+  text = text.replace(/\\boxed\{([^}]+)\}/g, "$1");
+  text = text.replace(/([^\s^]+)\^(-?\d+)/g, (_, base, exp) => {
+    const superMap = {'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+    return base + [...exp].map(c => superMap[c] ?? c).join('');
+  });
   return text
     .trim()
     .replace(/\$\$?/g, "")
@@ -229,27 +250,43 @@ function renderBookwork() {
   chrome.storage.local.get(["bookwork"], (data) => {
     const bookwork = data.bookwork || [];
 
-    // Filter out 1-char codes and entries with no answer
-    const filtered = bookwork.filter(e => 
+    const filtered = bookwork.filter(e =>
       e.label?.length > 1 && e.answer != null && e.answer !== "..."
     );
 
-    // If anything was removed, save the cleaned list
     if (filtered.length !== bookwork.length) {
       chrome.storage.local.set({ bookwork: filtered }, () => renderBookwork());
       return;
     }
 
     const el = document.getElementById("Bookwork");
-    const clearBtn = `<button id="clearBookwork" class="answerbtn" style="background:#e53e3e;color:white;border:none;border-radius:4px;margin-bottom:6px;">Clear Bookwork</button>`;
-    el.innerHTML = filtered.length === 0
-      ? `${clearBtn}<p style="color:#999;font-size:13px">No questions yet.</p>`
-      : clearBtn + [...filtered].reverse().map((e) => `
-          <div style="padding:8px 0;border-bottom:1px solid #eee">
-            <strong>${e.label}</strong>
-            <span style="float:right;color:#4f46e5">${e.answer}</span>
-          </div>`
-        ).join("");
+    el.replaceChildren();
+
+    const clearBtn = document.createElement("button");
+    clearBtn.id = "clearBookwork";
+    clearBtn.className = "answerbtn";
+    clearBtn.style.cssText = "background:#e53e3e;color:white;border:none;border-radius:4px;margin-bottom:6px;";
+    clearBtn.textContent = "Clear Bookwork";
+    el.appendChild(clearBtn);
+
+    if (filtered.length === 0) {
+      const empty = document.createElement("p");
+      empty.style.cssText = "color:#999;font-size:13px";
+      empty.textContent = "No questions yet.";
+      el.appendChild(empty);
+    } else {
+      [...filtered].reverse().forEach((e) => {
+        const div = document.createElement("div");
+        div.style.cssText = "padding:8px 0;border-bottom:1px solid #eee";
+        const strong = document.createElement("strong");
+        strong.textContent = e.label;
+        const span = document.createElement("span");
+        span.style.cssText = "float:right;color:#4f46e5";
+        span.textContent = e.answer;
+        div.append(strong, span);
+        el.appendChild(div);
+      });
+    }
 
     document.getElementById("clearBookwork").addEventListener("click", () => {
       chrome.storage.local.remove(["bookwork"], () => renderBookwork());
